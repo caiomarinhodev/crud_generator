@@ -1,0 +1,176 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+from django.contrib import messages
+from django.contrib.admin.utils import NestedObjects
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.exceptions import FieldDoesNotExist
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import (
+    CreateView, DeleteView, UpdateView
+)
+from django.views.generic.list import ListView
+
+
+try:
+    from django.core.urlresolvers import reverse_lazy
+except ImportError:
+    from django.urls import reverse_lazy, reverse
+
+from ${app_name}.models import ${model_name}
+from ${app_name}.forms import ${model_name}Form
+from ${app_name}.mixins import ${model_name}Mixin
+from ${app_name}.conf import ${model_prefix}_DETAIL_URL_NAME, ${model_prefix}_CREATE_URL_NAME, \
+${model_prefix}_LIST_URL_NAME, ${model_prefix}_UPDATE_URL_NAME, \
+${model_prefix}_DELETE_URL_NAME
+
+
+class List(LoginRequiredMixin, ${model_name}Mixin, ListView):
+    """
+    List all ${model_name}s
+    """
+    login_url = '/admin/login/'
+    queryset = ${model_name}.objects.all()
+    template_name = '${model_name_lower}/list.html'
+    model = ${model_name}
+    context_object_name = '${model_name_lower}s'
+    ordering = '-created_at'
+
+    def get_queryset(self):
+        return ${model_name}.objects.all()
+
+    def get_context_data(self, **kwargs):
+        context = super(List, self).get_context_data(**kwargs)
+        context['detail_url_name'] = ${model_prefix}_DETAIL_URL_NAME
+        context['delete_url_name'] = ${model_prefix}_DELETE_URL_NAME
+        if self.request.user.has_perm("${application_name}.add_${model_name_lower}"):
+            context['create_object_reversed_url'] = reverse_lazy(
+                ${model_prefix}_CREATE_URL_NAME
+            )
+        
+        return context
+
+
+class Create(LoginRequiredMixin, ${model_name}Mixin, PermissionRequiredMixin, CreateView):
+    """
+    Create a ${model_name}
+    """
+    login_url = '/admin/login/'
+    model = ${model_name}
+    permission_required = (
+        '${application_name}.add_${model_name_lower}'
+    )
+    form_class = ${model_name}Form
+    template_name = '${model_name_lower}/create.html'
+    context_object_name = '${model_name_lower}'
+
+    def get_context_data(self, **kwargs):
+        context = super(Create, self).get_context_data(**kwargs)
+        context['list_reversed_url'] = reverse_lazy(CATEGORY_LIST_URL_NAME)
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy(${model_prefix}_DETAIL_URL_NAME, kwargs=self.kwargs_for_reverse_url())
+
+    def get_initial(self):
+        data = super(Create, self).get_initial()
+        return data
+
+    def form_valid(self, form):
+        messages.success(self.request, '${model_name} criado com sucesso')
+        return super(Create, self).form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Houve algum erro, tente novamente')
+        return super(Create, self).form_invalid(form)
+
+
+class Detail(LoginRequiredMixin, ${model_name}Mixin, DetailView):
+    """
+    Detail of a ${model_name}
+    """
+    login_url = '/admin/login/'
+    model = ${model_name}
+    template_name = '${model_name_lower}/detail.html'
+    context_object_name = '${model_name_lower}'
+
+    def get_context_data(self, **kwargs):
+        context = super(Detail, self).get_context_data(**kwargs)
+        context['list_reversed_url'] = reverse_lazy(CATEGORY_LIST_URL_NAME)
+        if self.request.user.has_perm("${application_name}.change_${model_name_lower}"):
+            context['update_object_reversed_url'] = reverse_lazy(
+                ${model_prefix}_UPDATE_URL_NAME,
+                kwargs=self.kwargs_for_reverse_url()
+            )
+
+        if self.request.user.has_perm("${application_name}.delete_${model_name_lower}"):
+            context['delete_object_reversed_url'] = reverse_lazy(
+                ${model_prefix}_DELETE_URL_NAME,
+                kwargs=self.kwargs_for_reverse_url()
+            )
+        return context
+
+
+class Update(LoginRequiredMixin, ${model_name}Mixin, PermissionRequiredMixin, UpdateView):
+    """
+    Update a ${model_name}
+    """
+    login_url = '/admin/login/'
+    model = ${model_name}
+    template_name = '${model_name_lower}/update.html'
+    context_object_name = '${model_name_lower}'
+    form_class = ${model_name}Form
+    permission_required = (
+        '${application_name}.change_${model_name_lower}'
+    )
+
+    def get_initial(self):
+        data = super(Update, self).get_initial()
+        return data
+
+    def get_success_url(self):
+        return reverse_lazy(${model_prefix}_DETAIL_URL_NAME, kwargs=self.kwargs_for_reverse_url())
+
+    def get_context_data(self, **kwargs):
+        data = super(Update, self).get_context_data(**kwargs)
+        data['list_reversed_url'] = reverse_lazy(CATEGORY_LIST_URL_NAME)
+        return data
+
+    def form_valid(self, form):
+        messages.success(self.request, '${model_name} atualizado com sucesso')
+        return super(Update, self).form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Houve algum erro, tente novamente')
+        return super(Update, self).form_invalid(form)
+
+
+class Delete(LoginRequiredMixin, ${model_name}Mixin, PermissionRequiredMixin, DeleteView):
+    """
+    Delete a ${model_name}
+    """
+    login_url = '/admin/login/'
+    model = ${model_name}
+    permission_required = (
+        '${application_name}.delete_${model_name_lower}'
+    )
+    template_name = '${model_name_lower}/delete.html'
+    context_object_name = '${model_name_lower}'
+
+    def get_context_data(self, **kwargs):
+        context = super(Delete, self).get_context_data(**kwargs)
+        context['list_reversed_url'] = reverse_lazy(CATEGORY_LIST_URL_NAME)
+        collector = NestedObjects(using='default')
+        collector.collect([self.get_object()])
+        context['deleted_objects'] = collector.nested()
+        return context
+
+    def __init__(self):
+        super(Delete, self).__init__()
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, '${model_name} removido com sucesso')
+        return super(Delete, self).delete(self.request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse_lazy(${model_prefix}_LIST_URL_NAME)

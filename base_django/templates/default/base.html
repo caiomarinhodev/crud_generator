@@ -1,0 +1,145 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CRUD com Bootstrap 3</title>
+
+    <link href="{% static 'default/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'default/css/style.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'default/css/sweetalert.min.css' %}">
+    <link rel="stylesheet" type="text/css"
+          href="{% static 'default/css/datatables.min.css' %}"/>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Web Dev Academy</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#">Inicio</a></li>
+                <li><a href="#">Perfil</a></li>
+                <li><a href="#">Ajuda</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div id="main" class="container-fluid" style="margin-top: 50px">
+    {% block content %}
+        {% include 'loading.html' %}
+
+    {% endblock %}
+
+</div> <!-- /#main -->
+
+
+{% if messages %}
+    {% for message in messages %}
+        {% if message.tags == 'error' %}
+            <script>
+                $(document).ready(function () {
+                    swal("Erro", "{{ message|safe }}", "error")
+                });
+            </script>
+        {% else %}
+            <script>
+                $(document).ready(function () {
+                    swal("Sucesso", "{{ message|safe }}", "success")
+                });
+            </script>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<script src="{% static 'default/js/jquery.min.js' %}"></script>
+<script src="{% static 'default/js/bootstrap.min.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'default/js/sweetalert.min.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'default/js/datatables.min.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'default/js/moment-with-locales.min.js' %}"></script>
+
+
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.3/js/bootstrap-tour.min.js"></script>
+
+<script src="{% static 'default/js/customTour.js' %}"></script>
+
+<script type="text/javascript">
+
+    var tour = null;
+
+    function init_tour() {
+        tour.restart();
+        tour.start(true);
+    }
+
+    $(document).ready(function () {
+
+        $.fn.datepicker.dates['en'] = {
+            days: ["Domingo", "Segunda", "Terca", "Quarta", "Quinta",
+                "Sexta", "Sabado"],
+            daysShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"],
+            daysMin: ["Do", "Se", "Te", "Qu", "Qu", "Se", "Sa"],
+            months: ["Janeiro", "Fevereiro", "Marco", "Abril",
+                "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
+            monthsShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+            today: "Hoje",
+            clear: "Limpar",
+        };
+
+
+        $('.datepicker').datepicker({
+            clearBtn: true,
+            format: 'dd/mm/yyyy',
+            todayHighlight: true,
+            autoclose: true,
+        });
+
+        $('[name=cep]').focusout(function () {
+            $('#loading').show();
+            var cep = $('[name=cep]');
+            var cepCode = cep.val();
+            if (cepCode.length <= 0) return;
+            $.ajax({
+                type: 'GET',
+                url: 'http://apps.widenet.com.br/busca-cep/api/cep.json',
+                data: {code: cepCode},
+                success: function (result) {
+                    $('#loading').hide();
+                    if (result.status == 0) {
+                        alert(result.message || "Houve um erro desconhecido");
+                        return;
+                    } else {
+                        $('[name=cep]').val(result.code);
+                        var index = result.address.search('-');
+                        if (index != -1) {
+                            address = result.address.substring(0, index);
+                        } else {
+                            address = result.address;
+                        }
+                        $('[name=endereco]').val(address);
+                        $('[name=bairro]').val(result.district);
+                    }
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

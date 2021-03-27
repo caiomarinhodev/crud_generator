@@ -1,0 +1,11 @@
+dj-database-url
+Django
+gunicorn
+psycopg2-binary
+pyimgur
+beautifulsoup4
+pytz
+djangorestframework
+django-extensions
+requests==2.9.1
+whitenoise==2.0.6
