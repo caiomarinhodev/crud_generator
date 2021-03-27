@@ -66,7 +66,7 @@ class Create(LoginRequiredMixin, ${model_name}Mixin, PermissionRequiredMixin, Cr
 
     def get_context_data(self, **kwargs):
         context = super(Create, self).get_context_data(**kwargs)
-        context['list_reversed_url'] = reverse_lazy(CATEGORY_LIST_URL_NAME)
+        context['list_reversed_url'] = reverse_lazy(${model_prefix}_LIST_URL_NAME)
         return context
 
     def get_success_url(self):
@@ -96,7 +96,7 @@ class Detail(LoginRequiredMixin, ${model_name}Mixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(Detail, self).get_context_data(**kwargs)
-        context['list_reversed_url'] = reverse_lazy(CATEGORY_LIST_URL_NAME)
+        context['list_reversed_url'] = reverse_lazy(${model_prefix}_LIST_URL_NAME)
         if self.request.user.has_perm("${application_name}.change_${model_name_lower}"):
             context['update_object_reversed_url'] = reverse_lazy(
                 ${model_prefix}_UPDATE_URL_NAME,
@@ -133,7 +133,7 @@ class Update(LoginRequiredMixin, ${model_name}Mixin, PermissionRequiredMixin, Up
 
     def get_context_data(self, **kwargs):
         data = super(Update, self).get_context_data(**kwargs)
-        data['list_reversed_url'] = reverse_lazy(CATEGORY_LIST_URL_NAME)
+        data['list_reversed_url'] = reverse_lazy(${model_prefix}_LIST_URL_NAME)
         return data
 
     def form_valid(self, form):
@@ -159,7 +159,7 @@ class Delete(LoginRequiredMixin, ${model_name}Mixin, PermissionRequiredMixin, De
 
     def get_context_data(self, **kwargs):
         context = super(Delete, self).get_context_data(**kwargs)
-        context['list_reversed_url'] = reverse_lazy(CATEGORY_LIST_URL_NAME)
+        context['list_reversed_url'] = reverse_lazy(${model_prefix}_LIST_URL_NAME)
         collector = NestedObjects(using='default')
         collector.collect([self.get_object()])
         context['deleted_objects'] = collector.nested()
