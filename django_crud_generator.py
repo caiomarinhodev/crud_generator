@@ -1,10 +1,9 @@
 import os
 
 from django.apps import apps
-
 from django_crud_generator.conf import VIEW_CLASSES
 from django_crud_generator.core import get_args, generic_insert_with_folder, inject_modules, copy_account_templates, \
-    generate_templates_model, copy_template_tags, copy_static_theme, copy_templates_default
+    generate_templates_model, copy_template_tags, copy_static_theme, copy_templates_default, copy_dependencies
 from django_crud_generator.utils import check_class_in_file, sanity_check
 
 
@@ -35,3 +34,7 @@ def generate_default_templates(app_name, type='dashboard'):
     copy_templates_default(args)
     copy_account_templates(args)
     copy_template_tags(args)
+
+
+def copy_deps(app_name):
+    copy_dependencies(app_name)

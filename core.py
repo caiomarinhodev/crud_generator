@@ -85,7 +85,7 @@ def copy_static_theme(args):
             os.mkdir('static')
         try:
             shutil.copytree(original, target)
-        except (FileExistsError, ):
+        except (FileExistsError,):
             print('-- Theme already exists in STATIC folder.')
 
 
@@ -185,3 +185,10 @@ def generic_insert_with_folder(folder_name, file_name, template_name, checking_c
 def generate_templates_model(args):
     print('-- Generating templates model: ', args['model_name'])
     copy_templates_model(args)
+
+
+def copy_dependencies(app_name):
+    for item in ['requirements.txt', 'Procfile', '.gitignore', 'django.gitlab-ci.yaml']:
+        original = os.path.join('django_crud_generator', item)
+        target = os.path.join(app_name, item)
+        shutil.copy(original, target)
