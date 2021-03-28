@@ -188,7 +188,7 @@ def generate_templates_model(args):
 
 
 def copy_dependencies(app_name):
-    for item in ['requirements.txt', 'Procfile', '.gitignore', 'django.gitlab-ci.yaml']:
+    for item in ['requirements.txt', 'Procfile', '.gitignore', 'django.gitlab-ci.yml']:
         original = os.path.join('django_crud_generator', item)
-        target = os.path.join(app_name, item)
+        target = os.path.join(item)
         shutil.copy(original, target)
