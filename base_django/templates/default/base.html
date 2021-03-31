@@ -9,10 +9,11 @@
 
     <link href="{% static 'default/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="{% static 'default/css/style.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{% static 'default/css/sweetalert.min.css' %}">
     <link rel="stylesheet" type="text/css"
           href="{% static 'default/css/datatables.min.css' %}"/>
+    <script src="{% static 'default/js/jquery.min.js' %}"></script>
 </head>
 <body>
 
@@ -76,7 +77,7 @@
 
 
 <script type="text/javascript"
-        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.3/js/bootstrap-tour.min.js"></script>
+        src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.10.3/js/bootstrap-tour.min.js"></script>
 
 <script src="{% static 'default/js/customTour.js' %}"></script>
 
@@ -118,7 +119,7 @@
             if (cepCode.length <= 0) return;
             $.ajax({
                 type: 'GET',
-                url: 'http://apps.widenet.com.br/busca-cep/api/cep.json',
+                url: '//apps.widenet.com.br/busca-cep/api/cep.json',
                 data: {code: cepCode},
                 success: function (result) {
                     $('#loading').hide();
