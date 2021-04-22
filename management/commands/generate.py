@@ -21,21 +21,21 @@ class Command(BaseCommand):
             else:
                 name_app = 'app'
             if 'type' in kwargs:
-                type = kwargs['type']
+                typer = kwargs['type']
             else:
-                type = 'default'
+                typer = 'default'
             if kwargs['all']:
                 print('-- Generating all templates, files and models')
-                generate_default_templates(name_app, type)
-                generate_all_models(name_app, type)
+                generate_default_templates(name_app, typer)
+                generate_all_models(name_app, typer)
             else:
                 if kwargs['default']:
                     print('-- Creating Default Templates')
-                    generate_default_templates(name_app, type)
+                    generate_default_templates(name_app, typer)
                 if kwargs['model']:
                     for model in kwargs['model']:
                         model_name = model
                         print('-- Generating model: ', model_name)
-                        generate_for_model(name_app, model_name, type)
+                        generate_for_model(name_app, model_name, typer)
         except (Exception,):
             raise CommandError('Error, try again.')
