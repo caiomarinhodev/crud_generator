@@ -192,3 +192,12 @@ def copy_dependencies(app_name):
         original = os.path.join('django_crud_generator', item)
         target = os.path.join(item)
         shutil.copy(original, target)
+
+
+def delete_all_unused_files():
+    list_files = ['views.py', 'tests.py', 'urls.py', 'admin.py', 'forms.py', 'conf.py',
+                  'mixins.py', 'serializers.py', 'viewsets.py', 'urls_api.py', 'utils.py']
+    for file in list_files:
+        path_to_file = os.path.join('app', file)
+        if os.path.exists(path_to_file):
+            os.remove(path_to_file)
