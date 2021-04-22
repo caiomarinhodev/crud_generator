@@ -16,8 +16,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         try:
-            name_app = kwargs['app']
-            type = kwargs['type']
+            if 'app' in kwargs:
+                name_app = kwargs['app']
+            else:
+                name_app = 'app'
+            if 'type' in kwargs:
+                type = kwargs['type']
+            else:
+                type = 'default'
             if kwargs['all']:
                 print('-- Generating all templates, files and models')
                 generate_default_templates(name_app, type)
