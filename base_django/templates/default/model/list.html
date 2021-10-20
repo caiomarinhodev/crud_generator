@@ -4,7 +4,7 @@
 {% block content %}
     <div id="top" class="row">
         <div class="col-sm-3">
-            <h2> Listagem de {{ model_name_plural }}</h2>
+            <h2> {{ model_name_plural }}</h2>
         </div>
         <div class="col-sm-6">
 
@@ -20,7 +20,7 @@
         </div>
         <div class="col-sm-3">
             <a href="{{ create_object_reversed_url }}" class="btn btn-primary pull-right h2"><i
-                    class="fa fa-plus"></i> Adicionar {{ model_name }}
+                    class="fa fa-plus"></i> Add {{ model_name }}
             </a>
         </div>
     </div> <!-- /#top -->
@@ -32,7 +32,7 @@
                 <tr>
                     <th>ID</th>
                     <th>DATA</th>
-                    <th class="actions">Ações</th>
+                    <th class="actions">Actions</th>
                 </tr>
                 </thead>
                 <tbody>

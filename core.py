@@ -94,9 +94,7 @@ def check_default_templates(args):
         return LIST_DASHBOARD_DEFAULT_TEMPLATES
     elif args['type'] == 'aplicativo':
         return LIST_APP_DEFAULT_TEMPLATES
-    elif args['type'] == 'default':
-        return LIST_THEME_DEFAULT_TEMPLATES
-    return None
+    return LIST_THEME_DEFAULT_TEMPLATES
 
 
 def copy_template_tags(args):

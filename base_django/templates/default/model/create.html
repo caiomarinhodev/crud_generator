@@ -2,7 +2,7 @@
 {% load static %}
 {% load form_utils %}
 {% block content %}
-    <h3 class="page-header">Adicionar</h3>
+    <h3 class="page-header">Add Item</h3>
 
     <form action="" method="post">
         {% csrf_token %}
@@ -11,9 +11,9 @@
         <div id="actions" class="row">
             <div class="col-md-12">
                 <button id="btn_salvar" class="btn btn-primary" type="submit">
-                    Adicionar
+                    Add
                 </button>
-                <a href="{{ list_reversed_url }}" class="btn btn-default">Voltar</a>
+                <a href="{{ list_reversed_url }}" class="btn btn-default">Back</a>
             </div>
         </div>
     </form>
