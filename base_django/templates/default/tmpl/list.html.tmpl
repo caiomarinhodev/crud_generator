@@ -18,14 +18,14 @@
             <table id="table" class="table table-striped" cellspacing="0" cellpadding="0">
                 <thead>
                 <tr>
-                    <th>ID</th>
+                    ${header_table}
                     <th class="actions">Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for ${model_name_lower} in ${model_name_lower}s %}
                     <tr>
-                        <td>{{ ${model_name_lower}.id }}</td>
+                        ${body_table}
                         <td class="actions">
                             <a href="{% url '${model_prefix}_detail' ${model_name_lower}.pk %}"> <i
                                     class="fa fa-eye"></i></a>
