@@ -4,19 +4,28 @@
 {% block content %}
     <h3 class="page-header">Add ${model_name}</h3>
 
-    <form action="" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <hr/>
-        <div id="actions" class="row">
-            <div class="col-md-12">
-                <button id="btn_salvar" class="btn btn-primary" type="submit">
-                    Add ${model_name}
-                </button>
-                <a href="{% url '${model_prefix}_list' %}" class="btn btn-default">Back</a>
-            </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        {{ form.as_p }}
+                    </div>
+                    <div class="panel-footer">
+                        <div id="actions" class="row">
+                            <div class="col-md-12">
+                                <button id="btn_salvar" class="btn btn-primary" type="submit">
+                                    Add ${model_name}
+                                </button>
+                                <a href="{% url '${model_prefix}_list' %}" class="btn btn-default">Back</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
     <script type="text/javascript">
     </script>
 {% endblock %}
