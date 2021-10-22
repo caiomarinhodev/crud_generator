@@ -2,6 +2,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import IntegrityError
 from django_crud_generator.django_crud_generator import generate_for_model, generate_default_templates, \
     generate_all_models
+import os
+
 
 
 class Command(BaseCommand):
@@ -17,6 +19,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         name_app = 'app'
         typer = 'default'
+        project_name = os.path.basename(os.getcwd())
         try:
             if 'app' in kwargs:
                 if kwargs['app'] is not None:
@@ -28,10 +31,10 @@ class Command(BaseCommand):
                 for model in kwargs['model']:
                     model_name = model
                     print('-- Generating model: ', model_name)
-                    generate_for_model(name_app, model_name, typer)
+                    generate_for_model(name_app, model_name, project_name, typer)
             else:
                 print('-- Generating all templates, files and models')
                 generate_default_templates(name_app, typer)
-                generate_all_models(name_app, typer)
+                generate_all_models(name_app, project_name, typer)
         except (Exception,):
             raise CommandError('Error, try again.')

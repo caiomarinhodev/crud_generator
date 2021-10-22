@@ -5,15 +5,18 @@ import os
 import shutil
 import string
 
+from django.apps import apps
+
 from django_crud_generator.conf import VIEW_CLASSES, MODULES_TO_INJECT, BASE_TEMPLATES_DIR, ACCOUNTS_LIST_TEMPLATES, \
     LIST_DASHBOARD_DEFAULT_TEMPLATES, LIST_APP_DEFAULT_TEMPLATES, LIST_TEMPLATE_TAGS, LIST_THEME_DEFAULT_TEMPLATES
 from django_crud_generator.utils import convert, check_class_in_file
 
 
-def get_args(app, model, type):
+def get_args(app, model, project_name, type):
     args = {'model_name': str(model.__name__), 'type': str(type),
             'model_prefix': str(model.__name__).upper(),
-            'app_name': app, 'url_pattern': str(model.__name__).lower()}
+            'app_name': app, 'url_pattern': str(model.__name__).lower(),
+            'project_name': str(project_name)}
     simplified_file_name = convert(str(model.__name__).strip())
     args['simplified_view_file_name'] = simplified_file_name
     args['model_name_lower'] = args['model_name'].lower()
@@ -30,6 +33,16 @@ def inject_modules(args):
     #     os.path.join(BASE_TEMPLATES_DIR, "urls_api_urls_patch.py.tmpl"),
     #     **args
     # )
+
+
+def add_urls_in_project(args):
+    file = create_or_open(os.path.join(args['project_name'], '{}.py'.format('urls')),
+                          None,
+                          args)
+    render_template_with_args_in_file(file,
+                                      os.path.join(BASE_TEMPLATES_DIR, '{}.py.tmpl'.format('project_urls')),
+                                      **args)
+    file.close()
 
 
 def copy_account_templates(args):
@@ -52,6 +65,29 @@ def copy_templates_model(args):
         target = os.path.join(args['app_name'], 'templates', convert(args['model_name'].strip().lower()),
                               convert(type_view.strip().lower() + '.html'))
         shutil.copy(original, target)
+
+
+def create_templates_model(args):
+    model_name = args['model_name']
+    app_name = args['app_name']
+    Model = apps.get_model(app_name, model_name)
+    attributes_model = [f.name for f in Model._meta.get_fields()]
+    args['attributes_model'] = attributes_model
+    path_templates_model = os.path.join(app_name, 'templates',
+                                        convert(args['model_name'].strip().lower()))
+    if not os.path.isdir(path_templates_model):
+        os.mkdir(path_templates_model)
+    for type_view in VIEW_CLASSES:
+        file_path = os.path.join(app_name, 'templates', convert(model_name.strip().lower()),
+                                 convert(type_view.strip().lower() + '.html'))
+        file_html = create_or_open(file_path, None, None)
+        template_path = os.path.join('django_crud_generator', 'base_django', 'templates',
+                                     args['type'], 'tmpl', convert(type_view.strip().lower() + '.html.tmpl'))
+        render_template_with_args_in_file(
+            file_html,
+            template_path,
+            **args
+        )
 
 
 def copy_templates_default(args):

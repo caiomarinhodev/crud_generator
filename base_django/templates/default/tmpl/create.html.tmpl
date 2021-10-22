@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load form_utils %}
+{% block content %}
+    <h3 class="page-header">Add ${model_name}</h3>
+
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <hr/>
+        <div id="actions" class="row">
+            <div class="col-md-12">
+                <button id="btn_salvar" class="btn btn-primary" type="submit">
+                    Add ${model_name}
+                </button>
+                <a href="{% url '${model_prefix}_list' %}" class="btn btn-default">Back</a>
+            </div>
+        </div>
+    </form>
+    <script type="text/javascript">
+    </script>
+{% endblock %}

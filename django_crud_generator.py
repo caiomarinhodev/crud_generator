@@ -4,20 +4,21 @@ from django.apps import apps
 from django_crud_generator.conf import VIEW_CLASSES
 from django_crud_generator.core import get_args, generic_insert_with_folder, inject_modules, copy_account_templates, \
     generate_templates_model, copy_template_tags, copy_static_theme, copy_templates_default, copy_dependencies, \
-    delete_all_unused_files
+    delete_all_unused_files, create_templates_model, add_urls_in_project
 from django_crud_generator.utils import check_class_in_file, sanity_check
 
 
-def generate_all_models(app_name, type='dashboard'):
-    delete_all_unused_files()
+def generate_all_models(app_name, project_name, type='dashboard'):
+    # delete_all_unused_files()
     models = apps.get_app_config(app_name).get_models()
+    add_urls_in_project({'project_name': project_name})
     for model in models:
-        generate_for_model(app_name, model.__name__, type)
+        generate_for_model(app_name, model.__name__, project_name, type)
 
 
-def generate_for_model(app_name, model, type='dashboard'):
+def generate_for_model(app_name, model, project_name, type='dashboard'):
     model = apps.get_model(app_name, model)
-    args = get_args(app_name, model, type)
+    args = get_args(app_name, model, project_name, type)
     models_file_path = os.path.join(args['app_name'], 'models.py')
     if check_class_in_file(models_file_path, str(model.__name__)):
         sanity_check(args)
@@ -26,7 +27,7 @@ def generate_for_model(app_name, model, type='dashboard'):
         flag = generic_insert_with_folder("tests", "test_{}".format(args["simplified_view_file_name"]), "tests.py.tmpl",
                                           [permission_class_name], args)
         if flag != 0:
-            generate_templates_model(args)
+            create_templates_model(args)
             inject_modules(args)
 
 

@@ -1,0 +1,74 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+{% load form_utils %}
+{% block content %}
+    <div id="top" class="row">
+        <div class="col-sm-3">
+            <h2> {{ model_name_plural }}</h2>
+        </div>
+        <div class="col-sm-3 col-sm-offset-6">
+            <a href="{% url '${model_prefix}_create' %}" class="btn btn-primary pull-right h2"><i
+                    class="fa fa-plus"></i> Add ${model_name}
+            </a>
+        </div>
+    </div> <!-- /#top -->
+    <hr/>
+    <div id="list" class="row">
+        <div class="col-md-12">
+            <table id="table" class="table table-striped" cellspacing="0" cellpadding="0">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th class="actions">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for ${model_name_lower} in ${model_name_lower}s %}
+                    <tr>
+                        <td>{{ ${model_name_lower}.id }}</td>
+                        <td class="actions">
+                            <a href="{% url '${model_prefix}_detail' ${model_name_lower}.pk %}"> <i
+                                    class="fa fa-eye"></i></a>
+                            <a href="{% url '${model_prefix}_delete' ${model_name_lower}.pk %}"> <i
+                                    class="fa fa-trash-o"></i></a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div> <!-- /#list -->
+    <script type="text/javascript">
+
+    $(document).ready(function () {
+            $('#table').DataTable({
+                order: [[0, "desc"]],
+                "language": {
+                    "lengthMenu": "Exibir _MENU_ registros por página",
+                    "zeroRecords": "Nenhum item encontrado",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Nenhum registro disponível",
+                    "emptyTable": "Sem dados disponíveis na tabela",
+                    "infoFiltered": "(filtrado do total de _MAX_ registros)",
+                    "thousands": ".",
+                    "loadingRecords": "Carregando...",
+                    "processing": "Processando...",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first": "Primeiro",
+                        "last": "Último",
+                        "next": "Próximo",
+                        "previous": "Anterior"
+                    },
+                    "aria": {
+                        "sortAscending": ": ativar para classificar a coluna ascendente",
+                        "sortDescending": ": ativar para classificar a coluna descendente"
+                    }
+                }
+            });
+
+        });
+    </script>
+
+{% endblock %}

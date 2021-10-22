@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load form_utils %}
+{% block content %}
+    <h3 class="page-header">View ${model_name}</h3>
+
+    <div class="row">
+        {% for key, val in ${model_name_lower}|get_fields %}
+            <div class="col-md-4">
+                <p><strong>{{ key }}</strong></p>
+                <p>{{ val }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    <hr/>
+    <div id="actions" class="row">
+        <div class="col-md-12">
+            <a class="btn btn-primary" href="{% url '${model_prefix}_update' ${model_name_lower}.pk %}">
+                Edit
+            </a>
+            <a href="{% url '${model_prefix}_list' %}" class="btn btn-default">Back</a>
+        </div>
+    </div>
+    <script type="text/javascript">
+    </script>
+{% endblock %}
