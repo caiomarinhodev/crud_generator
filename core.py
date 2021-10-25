@@ -9,7 +9,11 @@ from django.apps import apps
 
 from django_crud_generator.conf import VIEW_CLASSES, MODULES_TO_INJECT, BASE_TEMPLATES_DIR, ACCOUNTS_LIST_TEMPLATES, \
     LIST_DASHBOARD_DEFAULT_TEMPLATES, LIST_APP_DEFAULT_TEMPLATES, LIST_TEMPLATE_TAGS, LIST_THEME_DEFAULT_TEMPLATES
+<<<<<<< HEAD
 from django_crud_generator.html_manager.form_manager import get_attributes_display, get_block_form
+=======
+from django_crud_generator.html_manager.form_manager import get_attributes_display
+>>>>>>> eabb0bbc816a38f876efe671e6d8385d23bde90c
 from django_crud_generator.html_manager.table_manager import get_header_table, get_body_table
 from django_crud_generator.utils import convert, check_class_in_file
 
