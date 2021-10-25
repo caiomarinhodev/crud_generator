@@ -9,6 +9,7 @@ from django.apps import apps
 
 from django_crud_generator.conf import VIEW_CLASSES, MODULES_TO_INJECT, BASE_TEMPLATES_DIR, ACCOUNTS_LIST_TEMPLATES, \
     LIST_DASHBOARD_DEFAULT_TEMPLATES, LIST_APP_DEFAULT_TEMPLATES, LIST_TEMPLATE_TAGS, LIST_THEME_DEFAULT_TEMPLATES
+from django_crud_generator.html_manager.form_manager import get_attributes_display, get_block_form
 from django_crud_generator.html_manager.table_manager import get_header_table, get_body_table
 from django_crud_generator.utils import convert, check_class_in_file
 
@@ -28,7 +29,7 @@ def get_args(app, model, project_name, type):
 
 def inject_modules(args):
     for module in MODULES_TO_INJECT:
-        generic_insert_module(module, args, **args)
+        generic_insert_module(module, args)
     # render_template_with_args_in_file(
     #     create_or_open(os.path.join(args['app_name'], 'urls.py'), "", args),
     #     os.path.join(BASE_TEMPLATES_DIR, "urls_api_urls_patch.py.tmpl"),
@@ -74,6 +75,7 @@ def create_templates_model(args):
     Model = apps.get_model(app_name, model_name)
     args['header_table'] = get_header_table(model=Model, args=args)
     args['body_table'] = get_body_table(model=Model, args=args)
+    args['block_form'] = get_block_form(model=Model)
     path_templates_model = os.path.join(app_name, 'templates',
                                         convert(args['model_name'].strip().lower()))
     if not os.path.isdir(path_templates_model):
@@ -174,18 +176,22 @@ def create_or_open(file_name, initial_template_file_name, args):
     return file
 
 
-def generic_insert_module(module_name, args, **kwargs):
+def generic_insert_module(module_name, args):
     """
     In general we have a initial template and then insert new data, so we dont repeat the schema for each module
     :param module_name: String with module name
     :paran **kwargs: Args to be rendered in template
     """
+    model_name = args['model_name']
+    app_name = args['app_name']
+    Model = apps.get_model(app_name, model_name)
+    args['list_display'] = get_attributes_display(model=Model)
     file = create_or_open(os.path.join(args['app_name'], '{}.py'.format(module_name)),
                           os.path.join(BASE_TEMPLATES_DIR, '{}_initial.py.tmpl'.format(module_name)),
                           args)
     render_template_with_args_in_file(file,
                                       os.path.join(BASE_TEMPLATES_DIR, '{}.py.tmpl'.format(module_name)),
-                                      **kwargs)
+                                      **args)
     file.close()
 
 
