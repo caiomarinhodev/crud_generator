@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import string
 
 
@@ -34,13 +33,6 @@ def get_block_form(model):
     return block_form
 
 
-=======
-def get_label(attr):
-    LABEL_TAG = '<label>{}</label>'
-    return LABEL_TAG.format(str(attr).capitalize())
-
-
->>>>>>> eabb0bbc816a38f876efe671e6d8385d23bde90c
 def get_attributes_display(model, format_type='({})'):
     attributes_model = ['"' + str(f.name) + '"' for f in model._meta.get_fields() if f.editable]
     list_str = ', '.join(map(str, attributes_model))
