@@ -9,7 +9,8 @@ from django.apps import apps
 
 from django_crud_generator.conf import VIEW_CLASSES, MODULES_TO_INJECT, BASE_TEMPLATES_DIR, ACCOUNTS_LIST_TEMPLATES, \
     LIST_DASHBOARD_DEFAULT_TEMPLATES, LIST_APP_DEFAULT_TEMPLATES, LIST_TEMPLATE_TAGS, LIST_THEME_DEFAULT_TEMPLATES
-from django_crud_generator.html_manager.form_manager import get_attributes_display, get_block_form
+from django_crud_generator.html_manager.form_manager import get_attributes_display, get_block_form, get_inline_classes, \
+    get_list_inlines
 from django_crud_generator.html_manager.table_manager import get_header_table, get_body_table
 from django_crud_generator.utils import convert, check_class_in_file
 
@@ -186,6 +187,9 @@ def generic_insert_module(module_name, args):
     app_name = args['app_name']
     Model = apps.get_model(app_name, model_name)
     args['list_display'] = get_attributes_display(model=Model)
+    if module_name == 'admin':
+        create_inlines_into_admin(Model, args)
+    args['list_inline_classes'] = get_inline_classes(model=Model)
     file = create_or_open(os.path.join(args['app_name'], '{}.py'.format(module_name)),
                           os.path.join(BASE_TEMPLATES_DIR, '{}_initial.py.tmpl'.format(module_name)),
                           args)
@@ -242,3 +246,19 @@ def delete_all_unused_files():
         path_to_file = os.path.join('app', file)
         if os.path.exists(path_to_file):
             os.remove(path_to_file)
+
+
+def create_inlines_into_admin(model, args):
+    inlines = get_list_inlines(model)
+    for inline in inlines:
+        args['inline'] = str(inline)
+        args['model_inline'] = args['inline'][:args['inline'].index('Inline')].capitalize()
+        file = create_or_open(
+            os.path.join(args['app_name'], 'admin.py'),
+            os.path.join(BASE_TEMPLATES_DIR, 'admin_initial.py.tmpl'),
+            args
+        )
+        render_template_with_args_in_file(file,
+                                          os.path.join(BASE_TEMPLATES_DIR, 'admin_inline.py.tmpl'),
+                                          **args)
+        file.close()

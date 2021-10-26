@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 
 from ${app_name} import conf
 
@@ -7,4 +7,9 @@ from ${app_name}.urls_api import api_urlpatterns
 urlpatterns = []
 
 urlpatterns += api_urlpatterns
+
+urlpatterns += [
+    path('', include('rest_auth.urls')),
+    path('registration/', include('rest_auth.registration.urls'))
+]
 

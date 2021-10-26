@@ -9,3 +9,4 @@ djangorestframework
 django-extensions
 requests==2.9.1
 whitenoise==2.0.6
+

@@ -1,5 +1,7 @@
 import string
 
+from django.db.models import ManyToOneRel
+
 
 def get_label_html(attr):
     LABEL_TAG = '<label>{}</label> \n'
@@ -28,7 +30,8 @@ def make_column_form(attr, length_col=12):
 
 
 def get_block_form(model):
-    attributes_model = [make_column_form(str(f.name)) for f in model._meta.get_fields() if f.editable and str(f.name).lower() != 'id']
+    attributes_model = [make_column_form(str(f.name)) for f in model._meta.get_fields() if
+                        f.editable and str(f.name).lower() != 'id']
     block_form = "".join(map(str, attributes_model))
     return block_form
 
@@ -38,3 +41,17 @@ def get_attributes_display(model, format_type='({})'):
     list_str = ', '.join(map(str, attributes_model))
     format_type = format_type.format(list_str)
     return format_type
+
+
+def get_list_inlines(model):
+    list_attributes_rel = [str(item.name) for item in model._meta.get_fields(include_hidden=True) if
+                           type(item) == ManyToOneRel]
+    list_inlines = ['{}Inline'.format(attribute.capitalize()) for attribute in list_attributes_rel]
+    return list_inlines
+
+
+def get_inline_classes(model):
+    list_inlines = get_list_inlines(model)
+    list_inlines = ', '.join(map(str, list_inlines))
+    list_inlines = '[{}]'.format(list_inlines)
+    return list_inlines

@@ -1,15 +1,15 @@
 import os
 
 from django.apps import apps
+
 from django_crud_generator.conf import VIEW_CLASSES
 from django_crud_generator.core import get_args, generic_insert_with_folder, inject_modules, copy_account_templates, \
-    generate_templates_model, copy_template_tags, copy_static_theme, copy_templates_default, copy_dependencies, \
-    delete_all_unused_files, create_templates_model, add_urls_in_project
+    copy_template_tags, copy_static_theme, copy_templates_default, copy_dependencies, \
+    create_templates_model, add_urls_in_project
 from django_crud_generator.utils import check_class_in_file, sanity_check
 
 
 def generate_all_models(app_name, project_name, type='dashboard'):
-    # delete_all_unused_files()
     models = apps.get_app_config(app_name).get_models()
     add_urls_in_project({'project_name': project_name})
     for model in models:
