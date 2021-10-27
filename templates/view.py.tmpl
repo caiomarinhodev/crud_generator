@@ -22,6 +22,8 @@ from ${app_name}.forms import ${model_name}Form
 from ${app_name}.mixins import ${model_name}Mixin
 from ${app_name}.conf import ${model_prefix}_DETAIL_URL_NAME, ${model_prefix}_LIST_URL_NAME
 
+from django_datatables_view.base_datatable_view import BaseDatatableView
+
 
 class List(LoginRequiredMixin, ${model_name}Mixin, ListView):
     """
@@ -150,3 +152,10 @@ class Delete(LoginRequiredMixin, ${model_name}Mixin, PermissionRequiredMixin, De
 
     def get_success_url(self):
         return reverse_lazy(${model_prefix}_LIST_URL_NAME)
+
+
+class ${model_name}ListJson(BaseDatatableView):
+    model = ${model_name}
+    columns = ${list_display}
+    order_columns = ${list_display}
+    max_display_length = 500

@@ -1,6 +1,6 @@
 import string
 
-from django.db.models import ManyToOneRel
+from django.db.models import ManyToOneRel, ManyToManyField, ManyToManyRel, OneToOneRel, OneToOneField
 
 
 def get_label_html(attr):
@@ -36,17 +36,26 @@ def get_block_form(model):
     return block_form
 
 
+def get_attributes_model(model):
+    return [f for f in model._meta.get_fields() if
+            f.editable and type(f) not in [ManyToOneRel, ManyToManyField, ManyToManyRel, OneToOneRel, OneToOneField]]
+
+
 def get_attributes_display(model, format_type='({})'):
-    attributes_model = ['"' + str(f.name) + '"' for f in model._meta.get_fields() if f.editable]
+    attributes_model = ['"' + str(f.name) + '"' for f in get_attributes_model(model)]
     list_str = ', '.join(map(str, attributes_model))
     format_type = format_type.format(list_str)
     return format_type
 
 
+def valid_name_field(item):
+    return '+' not in str(item.name)
+
+
 def get_list_inlines(model):
     list_attributes_rel = [get_related_name(str(item.related_model)) for item in
                            model._meta.get_fields(include_hidden=True) if
-                           type(item) == ManyToOneRel]
+                           type(item) == ManyToOneRel and valid_name_field(item)]
     list_inlines = ['{}Inline'.format(attribute) for attribute in list_attributes_rel]
     return list_inlines
 

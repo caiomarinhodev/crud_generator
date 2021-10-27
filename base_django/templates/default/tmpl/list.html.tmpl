@@ -23,17 +23,6 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for ${model_name_lower} in ${model_name_lower}s %}
-                    <tr>
-                        ${body_table}
-                        <td class="actions">
-                            <a href="{% url '${model_prefix}_detail' ${model_name_lower}.pk %}"> <i
-                                    class="fa fa-eye"></i></a>
-                            <a href="{% url '${model_prefix}_delete' ${model_name_lower}.pk %}"> <i
-                                    class="fa fa-trash-o"></i></a>
-                        </td>
-                    </tr>
-                {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -43,6 +32,21 @@
 
     $(document).ready(function () {
             $('#table').DataTable({
+            "processing": true,
+                "serverSide": true,
+                "ajax": "{% url '${model_prefix}_list_json' %}",
+                columnDefs: [
+                    {
+                        targets: -1,
+                        data: 'id',
+                        "render": function (data, type, row, meta) {
+                            return '<a href="/${url_pattern}/' + row[0] + '/"><i\n' +
+                                '                                    class="fa fa-eye"></i></a>' +
+                                '<a href="/${url_pattern}/'+row[0]+'/delete/"> <i\n' +
+                                '                                    class="fa fa-trash-o"></i></a>';
+                        }
+                    }
+                ],
                 order: [[0, "desc"]],
                 "language": {
                     "lengthMenu": "Exibir _MENU_ registros por página",

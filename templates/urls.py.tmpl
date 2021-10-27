@@ -26,5 +26,10 @@ urlpatterns += [
         ${view_file}.Delete.as_view(),
         name=conf.${model_prefix}_DELETE_URL_NAME
     ),
+    path(
+        '${url_pattern}/list/json/',
+        ${view_file}.${model_name}ListJson.as_view(),
+        name=conf.${model_prefix}_LIST_JSON_URL_NAME
+    )
 ]
 

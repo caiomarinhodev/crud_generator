@@ -10,8 +10,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         try:
-            name_app = kwargs['app']
             print('-- Copy requirements, procfile, and CI file')
-            copy_deps(name_app)
+            copy_deps()
         except (Exception,):
             raise CommandError('Error, try again.')

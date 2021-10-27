@@ -31,9 +31,7 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">Index</a></li>
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Help</a></li>
+                {% include 'menu.html' %}
             </ul>
         </div>
     </div>
@@ -92,25 +90,6 @@
 
     $(document).ready(function () {
 
-        $.fn.datepicker.dates['en'] = {
-            days: ["Domingo", "Segunda", "Terca", "Quarta", "Quinta",
-                "Sexta", "Sabado"],
-            daysShort: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"],
-            daysMin: ["Do", "Se", "Te", "Qu", "Qu", "Se", "Sa"],
-            months: ["Janeiro", "Fevereiro", "Marco", "Abril",
-                "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"],
-            monthsShort: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
-            today: "Hoje",
-            clear: "Limpar",
-        };
-
-
-        $('.datepicker').datepicker({
-            clearBtn: true,
-            format: 'dd/mm/yyyy',
-            todayHighlight: true,
-            autoclose: true,
-        });
 
         $('[name=cep]').focusout(function () {
             $('#loading').show();
