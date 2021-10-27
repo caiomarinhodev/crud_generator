@@ -44,9 +44,10 @@ def get_attributes_display(model, format_type='({})'):
 
 
 def get_list_inlines(model):
-    list_attributes_rel = [str(item.name) for item in model._meta.get_fields(include_hidden=True) if
+    list_attributes_rel = [get_related_name(str(item.related_model)) for item in
+                           model._meta.get_fields(include_hidden=True) if
                            type(item) == ManyToOneRel]
-    list_inlines = ['{}Inline'.format(attribute.capitalize()) for attribute in list_attributes_rel]
+    list_inlines = ['{}Inline'.format(attribute) for attribute in list_attributes_rel]
     return list_inlines
 
 
@@ -55,3 +56,7 @@ def get_inline_classes(model):
     list_inlines = ', '.join(map(str, list_inlines))
     list_inlines = '[{}]'.format(list_inlines)
     return list_inlines
+
+
+def get_related_name(word):
+    return word[word.index('app.models.') + len('app.models.'):word.index("'>")]

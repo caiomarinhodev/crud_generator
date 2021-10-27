@@ -252,7 +252,7 @@ def create_inlines_into_admin(model, args):
     inlines = get_list_inlines(model)
     for inline in inlines:
         args['inline'] = str(inline)
-        args['model_inline'] = args['inline'][:args['inline'].index('Inline')].capitalize()
+        args['model_inline'] = args['inline'][:args['inline'].index('Inline')]
         file = create_or_open(
             os.path.join(args['app_name'], 'admin.py'),
             os.path.join(BASE_TEMPLATES_DIR, 'admin_initial.py.tmpl'),
