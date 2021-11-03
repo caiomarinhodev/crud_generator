@@ -5,12 +5,11 @@ import os
 import shutil
 import string
 
-from django.apps import apps
-
 from django_crud_generator.conf import VIEW_CLASSES, MODULES_TO_INJECT, BASE_TEMPLATES_DIR, ACCOUNTS_LIST_TEMPLATES, \
     LIST_TEMPLATE_TAGS, LIST_THEME_DEFAULT_TEMPLATES
 from django_crud_generator.html_manager.form_manager import get_attributes_display, get_block_form, get_inline_classes, \
-    get_list_inlines
+    get_list_inlines, get_block_readonly_form, get_inlines_from_model, get_formsets, get_formsets_import, \
+    get_attributes_related
 from django_crud_generator.html_manager.table_manager import get_header_table, get_body_table
 from django_crud_generator.utils import convert, check_class_in_file
 
@@ -38,7 +37,10 @@ def get_args(app, model, project_name, type):
     args['list_display'] = get_attributes_display(model=model)
     args['header_table'] = get_header_table(model=model, args=args)
     args['body_table'] = get_body_table(model=model, args=args)
-    args['block_form'] = get_block_form(model=model)
+    args['block_form'] = get_block_form(model=model) + get_block_html_inlines(model=model, args=args)
+    args['formsets'] = get_formsets(model=model)
+    args['formsets_import'] = get_formsets_import(model=model)
+    args['block_readonly_form'] = get_block_readonly_form(model=model)
     args['list_inline_classes'] = get_inline_classes(model=model)
     return args
 
@@ -251,3 +253,32 @@ def insert_menu_link(args):
         os.path.join(BASE_TEMPLATES_DIR, 'menu_item.html.tmpl'),
         args
     )
+
+
+def get_block_html_inlines(model, args):
+    block_inline = ''
+    for inline in get_inlines_from_model(model):
+        args['model_inline_prefix'] = str(inline).lower()
+        args['model_inline'] = str(inline)
+        block_inline += get_block_html_inline(args)
+    return block_inline
+
+
+def get_block_html_inline(args):
+    template_file_name = os.path.join('django_crud_generator', 'base_django', 'templates',
+                                      args['type'], 'tmpl', 'block_inline_form.html.tmpl')
+    template_file_content = "".join(codecs.open(template_file_name, encoding='UTF-8').readlines())
+    template_rendered = string.Template(template_file_content).safe_substitute(**args)
+    return template_rendered
+
+
+def create_form_inlines(model, args):
+    for inline in get_attributes_related(model):
+        args['model_inline'] = str(inline)
+        forms_path = os.path.join(args['app_name'], 'forms.py')
+        render_file_by_template(
+            forms_path,
+            None,
+            os.path.join(BASE_TEMPLATES_DIR, 'formset.py.tmpl'),
+            args
+        )

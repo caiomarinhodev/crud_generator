@@ -5,12 +5,7 @@
     <h3 class="page-header">View ${model_name}</h3>
 
     <div class="row">
-        {% for key, val in ${model_name_lower}|get_fields %}
-            <div class="col-md-4">
-                <p><strong>{{ key }}</strong></p>
-                <p>{{ val }}</p>
-            </div>
-        {% endfor %}
+        ${block_readonly_form}
     </div>
     <hr/>
     <div id="actions" class="row">
@@ -22,5 +17,8 @@
         </div>
     </div>
     <script type="text/javascript">
+        $(document).ready(function () {
+            $('#${model_name_lower}_link').addClass('active');
+        });
     </script>
 {% endblock %}

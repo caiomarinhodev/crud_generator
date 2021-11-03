@@ -5,7 +5,6 @@ from django_crud_generator.django_crud_generator import generate_for_model, gene
 import os
 
 
-
 class Command(BaseCommand):
     help = 'Generate files by models'
 
@@ -33,5 +32,4 @@ class Command(BaseCommand):
                 generate_for_model(name_app, model_name, project_name, typer)
         else:
             print('-- Generating all templates, files and models')
-            generate_default_templates(name_app, typer)
             generate_all_models(name_app, project_name, typer)

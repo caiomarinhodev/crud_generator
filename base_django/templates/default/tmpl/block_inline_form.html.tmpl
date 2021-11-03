@@ -1,0 +1,39 @@
+<div class="col-md-12">
+    {{ ${model_inline_prefix}set.management_form }}
+    <table class="table">
+        <thead><h3>${model_inline}s</h3></thead>
+        {% for form in ${model_inline_prefix}set.forms %}
+            {% if forloop.first %}
+                <thead>
+                <tr>
+                    {% for field in form.visible_fields %}
+                        <th>{{ field.label|capfirst }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+            {% endif %}
+            <tr class="${model_inline_prefix}set_row">
+                {% for field in form.visible_fields %}
+                    <td>
+                        {# Include the hidden fields in the form #}
+                        {% if forloop.first %}
+                            {% for hidden in form.hidden_fields %}
+                                {{ hidden }}
+                            {% endfor %}
+                        {% endif %}
+                        {{ field.errors.as_ul }}
+                        {{ field }}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+    <script src="{% static 'default/js/jquery.formset.js' %}"></script>
+    <script type="text/javascript">
+        $('.${model_inline_prefix}set_row').formset({
+            addText: 'Adicionar',
+            deleteText: 'Remover',
+            prefix: '${model_inline_prefix}_set'
+        });
+    </script>
+</div>

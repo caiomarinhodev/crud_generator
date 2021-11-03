@@ -5,19 +5,25 @@ from django.apps import apps
 from django_crud_generator.conf import VIEW_CLASSES
 from django_crud_generator.core import get_args, generic_insert_with_folder, inject_modules, copy_account_templates, \
     copy_template_tags, copy_static_theme, copy_templates_default, copy_dependencies, \
-    create_templates_model, add_urls_in_project, insert_menu_link, add_utils_in_project
-from django_crud_generator.html_manager.form_manager import get_attributes_display
+    create_templates_model, add_urls_in_project, insert_menu_link, add_utils_in_project, create_form_inlines
 from django_crud_generator.utils import check_class_in_file, sanity_check
+
+
+def has_templates_default(app_name):
+    return os.path.isfile(os.path.join(app_name, 'templates', 'menu.html'))
 
 
 def generate_all_models(app_name, project_name, type='dashboard'):
     models = apps.get_app_config(app_name).get_models()
-    add_urls_in_project({'project_name': project_name})
-    add_utils_in_project({'app_name': app_name})
+    if not has_templates_default(app_name):
+        add_urls_in_project({'project_name': project_name})
+        add_utils_in_project({'app_name': app_name})
+        generate_default_templates(app_name, type)
     for model in models:
         generate_for_model(app_name, model.__name__, project_name, type)
 
 
+# TODO: Bug ao rodar generate 2x.
 def generate_for_model(app_name, model, project_name, type='dashboard'):
     model = apps.get_model(app_name, model)
     args = get_args(app_name, model, project_name, type)
@@ -32,6 +38,7 @@ def generate_for_model(app_name, model, project_name, type='dashboard'):
             create_templates_model(args)
             insert_menu_link(args)
             inject_modules(model, args)
+            create_form_inlines(model, args)
 
 
 def generate_default_templates(app_name, type='dashboard'):

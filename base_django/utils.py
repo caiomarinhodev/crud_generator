@@ -83,7 +83,8 @@ def field_to_widget(field):
     if type(field) is ForeignKey:
         return Select(attrs={"class": "form-control"})
     if type(field) is ManyToManyField:
-        return CheckboxSelectMultiple(attrs={"class": ""})
+        return CheckboxSelectMultiple(attrs={"class": ""},
+                                      choices=((model.id, model) for model in field.related_model.objects.all()))
     if type(field) is BooleanField:
         return CheckboxInput(attrs={"class": "form-control"})
     if type(field) is FileField:
@@ -95,6 +96,11 @@ def field_to_widget(field):
         })
     if type(field) is DateTimeField:
         return DateTimeInput(attrs={"class": "form-control datetimepicker"})
+    if type(field) is DateTimeField:
+        return DateTimeInput(attrs={"class": "form-control datetimepicker"})
+    if field.one_to_one:
+        return Select(attrs={"class": "form-control"},
+                      choices=((model.id, model) for model in field.related_model.objects.all()))
 
     return TextInput(attrs={"class": "form-control", "rows": 1})
 
