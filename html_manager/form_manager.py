@@ -1,6 +1,7 @@
 import string
 
-from django.db.models import ManyToOneRel, ManyToManyField, ManyToManyRel, OneToOneRel, OneToOneField, ForeignKey
+from django.db.models import ManyToOneRel, ManyToManyField, ManyToManyRel, ForeignKey, \
+    CharField, URLField, FileField
 
 
 def get_label_html(attr):
@@ -57,6 +58,17 @@ def get_block_readonly_form(model):
     return block_form
 
 
+def get_related_script(model):
+    arr = []
+    attributes = get_attributes_filter_model(model=model)
+    for f in attributes:
+        field = f.__dict__
+        if 'related_model' in field:
+            related_model = f.related_model
+            arr.append(f.name)
+    return arr
+
+
 def get_block_form(model):
     attributes_model = [make_column_form(str(f.name)) for f in model._meta.get_fields() if
                         f.editable and str(f.name).lower() != 'id']
@@ -66,7 +78,7 @@ def get_block_form(model):
 
 def get_attributes_model(model):
     return [f for f in model._meta.get_fields() if
-            f.editable and type(f) not in [ManyToOneRel, ManyToManyField, ManyToManyRel]]
+            f.editable and type(f) not in [ManyToOneRel, ManyToManyField, ManyToManyRel, FileField]]
 
 
 def get_attributes_related(model):
@@ -79,6 +91,50 @@ def get_attributes_display(model, format_type='({})'):
     list_str = ', '.join(map(str, attributes_model))
     format_type = format_type.format(list_str)
     return format_type
+
+
+def get_attr_filter_display(model, format_type='[{}]'):
+    attributes_model = get_attributes_filtered_with_relationship(model)
+    list_str = ', '.join(map(str, attributes_model))
+    format_type = format_type.format(list_str)
+    return format_type
+
+
+def get_attributes_filtered_with_relationship(model):
+    attributes_model = []
+    for f in get_attributes_filter_model(model):
+        if type(f) == FileField:
+            continue
+        field = f.__dict__
+        if 'related_model' in field:
+            related_model = f.related_model.__dict__
+            for key in related_model:
+                if not key.startswith('_'):
+                    if 'field' in related_model[key].__dict__:
+                        key_selected = related_model[key].__dict__
+                        if type(key_selected['field']) == CharField or type(key_selected['field']) == URLField:
+                            attributes_model.append('"' + str(f.name) + '__' + str(key_selected['field'].name) + '"')
+                            break
+                        else:
+                            attributes_model.append('"' + str(f.name) + '__id' + '"')
+                            break
+        else:
+            attributes_model.append('"' + str(f.name) + '"')
+    return attributes_model
+
+
+def get_search_general_attr(model):
+    attrs = [attr.replace('"', '') for attr in get_attributes_filtered_with_relationship(model)]
+    searchs = []
+    for attr in attrs:
+        searchs.append('Q({}__icontains=search)'.format(attr))
+    return '| '.join(map(str, searchs))
+
+
+def get_attributes_filter_model(model):
+    arr = [f for f in model._meta.get_fields() if
+           f.editable and type(f) not in [ManyToOneRel, ManyToManyField, ManyToManyRel]]
+    return arr
 
 
 def valid_name_field(item):

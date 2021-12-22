@@ -1,5 +1,15 @@
+
+
+class ${model_name}Filter(django_filters.FilterSet):
+    class Meta:
+        model = models.${model_name}
+        fields = ${list_filter_display}
+
+
 class ${model_name}ViewSet(viewsets.ModelViewSet):
     
     serializer_class = serializers.${model_name}Serializer
     queryset = models.${model_name}.objects.all()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = ${model_name}Filter
 

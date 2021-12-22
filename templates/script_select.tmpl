@@ -1,0 +1,24 @@
+$('#${select_attribute}').select2({
+    ajax: {
+        url: '/api/${attribute}/',
+        dataType: 'json',
+        data: function (params) {
+            var query = {
+                ${attribute_query}: params.term
+            }
+            return query;
+        },
+        processResults: function (data) {
+            new_data = []
+            data.forEach(function(elem){
+                new_data.push({
+                    id: elem.id,
+                    text: elem.${attribute_query}
+                });
+            });
+            return {
+                results: new_data
+            };
+        }
+    }
+});

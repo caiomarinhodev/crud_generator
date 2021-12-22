@@ -9,7 +9,7 @@ from django_crud_generator.conf import VIEW_CLASSES, MODULES_TO_INJECT, BASE_TEM
     LIST_TEMPLATE_TAGS, LIST_THEME_DEFAULT_TEMPLATES
 from django_crud_generator.html_manager.form_manager import get_attributes_display, get_block_form, get_inline_classes, \
     get_list_inlines, get_block_readonly_form, get_inlines_from_model, get_formsets, get_formsets_import, \
-    get_attributes_related
+    get_attributes_related, get_attr_filter_display, get_attributes_filtered_with_relationship, get_search_general_attr
 from django_crud_generator.html_manager.table_manager import get_header_table, get_body_table
 from django_crud_generator.utils import convert, check_class_in_file
 
@@ -35,9 +35,12 @@ def get_args(app, model, project_name, type):
     args['view_file'] = args['simplified_view_file_name']
     args['application_name'] = args['app_name'].split("/")[-1]
     args['list_display'] = get_attributes_display(model=model)
+    args['list_filter_display'] = get_attr_filter_display(model=model)
     args['header_table'] = get_header_table(model=model, args=args)
     args['body_table'] = get_body_table(model=model, args=args)
     args['block_form'] = get_block_form(model=model) + get_block_html_inlines(model=model, args=args)
+    args['block_select_script'] = get_block_select_script(model=model)
+    args['search_general_attr'] = get_search_general_attr(model=model)
     args['formsets'] = get_formsets(model=model)
     args['formsets_import'] = get_formsets_import(model=model)
     args['block_readonly_form'] = get_block_readonly_form(model=model)
@@ -270,6 +273,23 @@ def get_block_html_inline(args):
     template_file_content = "".join(codecs.open(template_file_name, encoding='UTF-8').readlines())
     template_rendered = string.Template(template_file_content).safe_substitute(**args)
     return template_rendered
+
+
+def get_block_select_script(model):
+    template = ''
+    path_script_tmpl = os.path.join(BASE_TEMPLATES_DIR, 'script_select.tmpl')
+    template_file_content = "".join(codecs.open(path_script_tmpl, encoding='UTF-8').readlines())
+    fields_model = get_attributes_filtered_with_relationship(model=model)
+    select_attributes = ['id_' + str(field.split('__')[0].replace('"', '')) for field in fields_model if '__' in field]
+    attributes = [str(field.split('__')[0].replace('"', '')) for field in fields_model if '__' in field]
+    attributes_query = [str(field.split('__')[1].replace('"', '')) for field in fields_model if '__' in field]
+    for i in range(len(select_attributes)):
+        dic = {}
+        dic['select_attribute'] = select_attributes[i]
+        dic['attribute'] = attributes[i]
+        dic['attribute_query'] = attributes_query[i]
+        template += string.Template(template_file_content).safe_substitute(**dic)
+    return template
 
 
 def create_form_inlines(model, args):

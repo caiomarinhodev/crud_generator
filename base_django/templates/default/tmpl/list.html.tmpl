@@ -13,29 +13,57 @@
         </div>
     </div> <!-- /#top -->
     <hr/>
-    <div id="list" class="row">
-        <div class="col-md-12">
-            <table id="table" class="table table-striped" cellspacing="0" cellpadding="0">
-                <thead>
-                <tr>
-                    ${header_table}
-                    <th class="actions">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
+    <form id="advancedForm" method="get" action="{% url '${model_prefix}_list' %}">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-sm-12">
 
-    </div> <!-- /#list -->
+                {{ filter.form.as_p }}
+                 <button type="button" class="btn btn-default" id="clear"><i class="fa fa-close"></i> Clear</button>
+
+
+            </div>
+        </div>
+        <hr/>
+        <div id="list" class="row">
+            <div class="col-md-12">
+                <table id="table" class="table table-striped" cellspacing="0" cellpadding="0">
+                    <thead>
+                    <tr>
+                        ${header_table}
+                        <th class="actions">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+
+        </div> <!-- /#list -->
+    </form>
     <script type="text/javascript">
 
     $(document).ready(function () {
+
+            function getData() {
+                var formData = $('#advancedForm').serializeArray().reduce(function (obj, item) {
+                    obj[item.name] = item.value;
+                    return obj;
+                }, {});
+                return formData;
+            }
+
             $('#${model_name_lower}_link').addClass('active');
-            $('#table').DataTable({
+            var table = $('#table').DataTable({
             "processing": true,
                 "serverSide": true,
                 "ajax": "{% url '${model_prefix}_list_json' %}",
+                "ajax": {
+                    "url": "{% url '${model_prefix}_list_json' %}",
+                    "data": function (d) {
+                        return $.extend({}, d, getData());
+                    }
+                },
                 columnDefs: [
                     {
                         targets: -1,
@@ -71,6 +99,15 @@
                         "sortDescending": ": ativar para classificar a coluna descendente"
                     }
                 }
+            });
+
+            $('input').on('keyup', function () {
+                table.search('').draw();
+            });
+
+            $('#clear').click(function (){
+                $("form")[0].reset();
+                table.search('').draw();
             });
 
         });

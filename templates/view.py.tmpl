@@ -12,6 +12,8 @@ from django.views.generic.edit import (
 )
 from django.views.generic.list import ListView
 
+from django.db.models import Q
+
 
 try:
     from django.core.urlresolvers import reverse_lazy
@@ -24,6 +26,8 @@ from ${app_name}.mixins import ${model_name}Mixin
 from ${app_name}.conf import ${model_prefix}_DETAIL_URL_NAME, ${model_prefix}_LIST_URL_NAME
 
 from django_datatables_view.base_datatable_view import BaseDatatableView
+
+import django_filters
 
 class ${model_name}FormSetManagement(object):
     formsets = ${formsets}
@@ -51,6 +55,11 @@ class ${model_name}FormSetManagement(object):
         return data
 
 
+class ${model_name}Filter(django_filters.FilterSet):
+    class Meta:
+        model = ${model_name}
+        fields = ${list_filter_display}
+
 
 class List(LoginRequiredMixin, ${model_name}Mixin, ListView):
     """
@@ -61,6 +70,13 @@ class List(LoginRequiredMixin, ${model_name}Mixin, ListView):
     model = ${model_name}
     context_object_name = '${model_name_lower}s'
     paginate_by = 1
+
+    def get_context_data(self, **kwargs):
+        context = super(List, self).get_context_data(**kwargs)
+        queryset = self.get_queryset()
+        filter = ${model_name}Filter(self.request.GET, queryset)
+        context["filter"] = filter
+        return context
 
 
 class Create(LoginRequiredMixin, ${model_name}Mixin, PermissionRequiredMixin, ${model_name}FormSetManagement, CreateView):
@@ -176,5 +192,12 @@ class Delete(LoginRequiredMixin, ${model_name}Mixin, PermissionRequiredMixin, De
 class ${model_name}ListJson(BaseDatatableView):
     model = ${model_name}
     columns = ${list_display}
-    order_columns = ${list_display}
+    order_columns = ${list_filter_display}
     max_display_length = 500
+
+    def filter_queryset(self, qs):
+        search = self.request.GET.get('search[value]', None)
+        if search:
+            qs = qs.filter(${search_general_attr})
+        filter = ${model_name}Filter(self.request.GET, qs)
+        return filter.qs
