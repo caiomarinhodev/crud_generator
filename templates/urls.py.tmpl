@@ -7,6 +7,11 @@ urlpatterns += [
         name=conf.${model_prefix}_LIST_URL_NAME
     ),
     path(
+        '${url_pattern}/full/',
+        ${view_file}.ListFull.as_view(),
+        name='${model_prefix}_list_full'
+    ),
+    path(
         '${url_pattern}/create/',
         ${view_file}.Create.as_view(),
         name=conf.${model_prefix}_CREATE_URL_NAME

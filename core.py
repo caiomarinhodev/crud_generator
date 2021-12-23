@@ -49,11 +49,13 @@ def get_args(app, model, project_name, type):
 
 
 def create_templates_model(args):
+    templates_crudl = VIEW_CLASSES.copy()
+    templates_crudl.append('list_full')
     path_templates_model = os.path.join(args['app_name'], 'templates',
                                         convert(args['model_name'].strip().lower()))
     if not os.path.isdir(path_templates_model):
         os.mkdir(path_templates_model)
-    for type_view in VIEW_CLASSES:
+    for type_view in templates_crudl:
         template_path_type = os.path.join(args['app_name'], 'templates', convert(args['model_name'].strip().lower()),
                                           convert(type_view.strip().lower() + '.html'))
         body_path_template_tmpl = os.path.join('django_crud_generator', 'base_django', 'templates',
@@ -100,6 +102,7 @@ def copy_account_templates(args):
         shutil.copy(original, target)
 
 
+# DEPRECATED (IS NOT BEING USED)
 def copy_templates_model(args):
     for type_view in VIEW_CLASSES:
         if not os.path.isdir(os.path.join(args['app_name'], 'templates',

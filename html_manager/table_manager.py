@@ -22,5 +22,8 @@ def get_body_table(model, args):
     for attribute in attributes_model:
         seq = '{{ ${model_name_lower}.' + attribute + ' }}'
         body += BODY_MODEL.format(str(seq))
+    body += BODY_MODEL.format(
+        '<a href="{% url '"'"+args['model_prefix']+"_detail'"' '+args['model_name_lower']+'.id %}"><i class="fa fa-eye"></i></a>&nbsp;&nbsp;<a href="{% url '"'"+args['model_prefix']+"_delete'"' '+args['model_name_lower']+'.id %}"><i class="fa fa-close"></i></a>'
+    )
     body = string.Template(body).safe_substitute(**args)
     return body

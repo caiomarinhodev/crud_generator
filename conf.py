@@ -69,5 +69,5 @@ ACCOUNTS_LIST_TEMPLATES = ['login.html', 'password_change.html', 'password_reset
 LIST_DASHBOARD_DEFAULT_TEMPLATES = ['404.html', '500.html', 'base.html', 'base_error.html', 'loading.html',
                                     'breadcrumb.html', 'menu.html']
 LIST_APP_DEFAULT_TEMPLATES = ['404.html', '500.html', 'base.html', 'footer.html', 'header.html', 'nav.html', ]
-LIST_TEMPLATE_TAGS = ['form_utils.py', 'input_checker.py', 'math_utils.py', 'type_utils.py']
+LIST_TEMPLATE_TAGS = ['form_utils.py', 'input_checker.py', 'math_utils.py', 'type_utils.py', 'my_tags.py']
 LIST_THEME_DEFAULT_TEMPLATES = ['404.html', '500.html', 'base.html', 'loading.html', 'menu.html']

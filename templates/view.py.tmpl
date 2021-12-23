@@ -79,6 +79,75 @@ class List(LoginRequiredMixin, ${model_name}Mixin, ListView):
         return context
 
 
+class ListFull(LoginRequiredMixin, ${model_name}Mixin, ListView):
+    """
+    List all ${model_name}s
+    """
+    login_url = '/admin/login/'
+    template_name = '${model_name_lower}/list_full.html'
+    model = ${model_name}
+    context_object_name = '${model_name_lower}s'
+    ordering = '-id'
+    paginate_by = 10
+    search = ''
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        filter =  ${model_name}Filter(self.request.GET, queryset)
+        queryset = self.search_general(filter.qs)
+        queryset = self.ordering_data(queryset)
+        return queryset
+
+    def search_general(self, qs):
+        if 'search' in self.request.GET:
+            self.search = self.request.GET['search']
+            if self.search:
+                search = self.search
+                qs = qs.filter(${search_general_attr})
+        return qs
+
+    def get_ordering(self):
+        if 'ordering' in self.request.GET:
+            self.ordering = self.request.GET['ordering']
+            if self.ordering:
+                return self.ordering
+            else:
+                self.ordering = '-id'
+        return self.ordering
+
+    def ordering_data(self, qs):
+        qs = qs.order_by(self.get_ordering())
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super(ListFull, self).get_context_data(**kwargs)
+        queryset = self.get_queryset()
+        filter = ${model_name}Filter(self.request.GET, queryset)
+        page_size = self.get_paginate_by(queryset)
+        if page_size:
+            paginator, page, queryset, is_paginated = self.paginate_queryset(queryset, page_size)
+            context.update(**{
+                'ordering': self.ordering,
+                'search': self.search,
+                'filter': filter,
+                'paginator': paginator,
+                'page_obj': page,
+                'is_paginated': is_paginated,
+                'object_list': queryset
+            })
+        else:
+            context.update(**{
+                'search': self.search,
+                'ordering': self.ordering,
+                'filter': filter,
+                'paginator': None,
+                'page_obj': None,
+                'is_paginated': False,
+                'object_list': queryset
+            })
+        return context
+
+
 class Create(LoginRequiredMixin, ${model_name}Mixin, PermissionRequiredMixin, ${model_name}FormSetManagement, CreateView):
     """
     Create a ${model_name}
