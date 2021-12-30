@@ -27,6 +27,8 @@ from ${app_name}.conf import ${model_prefix}_DETAIL_URL_NAME, ${model_prefix}_LI
 
 from django_datatables_view.base_datatable_view import BaseDatatableView
 
+from app.utils import upload_image, upload_file
+
 import django_filters
 
 class ${model_name}FormSetManagement(object):
@@ -36,6 +38,7 @@ class ${model_name}FormSetManagement(object):
         context = self.get_context_data()
         with transaction.atomic():
             self.object = form.save()
+            ${code_upload}
             for Formset in self.formsets:
                 formset = context["{}set".format(str(Formset.model.__name__).lower())]
                 if formset.is_valid():

@@ -9,7 +9,8 @@ from django_crud_generator.conf import VIEW_CLASSES, MODULES_TO_INJECT, BASE_TEM
     LIST_TEMPLATE_TAGS, LIST_THEME_DEFAULT_TEMPLATES
 from django_crud_generator.html_manager.form_manager import get_attributes_display, get_block_form, get_inline_classes, \
     get_list_inlines, get_block_readonly_form, get_inlines_from_model, get_formsets, get_formsets_import, \
-    get_attributes_related, get_attr_filter_display, get_attributes_filtered_with_relationship, get_search_general_attr
+    get_attributes_related, get_attr_filter_display, get_attributes_filtered_with_relationship, get_search_general_attr, \
+    get_list_display_form, get_code_upload_file
 from django_crud_generator.html_manager.table_manager import get_header_table, get_body_table
 from django_crud_generator.utils import convert, check_class_in_file
 
@@ -35,6 +36,8 @@ def get_args(app, model, project_name, type):
     args['view_file'] = args['simplified_view_file_name']
     args['application_name'] = args['app_name'].split("/")[-1]
     args['list_display'] = get_attributes_display(model=model)
+    args['list_display_form'] = get_list_display_form(model=model)
+    args['code_upload'] = get_code_upload_file(model=model)
     args['list_filter_display'] = get_attr_filter_display(model=model)
     args['header_table'] = get_header_table(model=model, args=args)
     args['body_table'] = get_body_table(model=model, args=args)
